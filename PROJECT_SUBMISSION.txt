@@ -1,0 +1,39 @@
+PROJECT SUBMISSION — Minecraft2Real: CycleGAN Image-to-Image Translation
+============================================================================
+
+EVIDENCE OF SELF-STARTING INSTINCT AND TECHNICAL CREATIVITY
+
+1. WHAT I BUILT
+---------------
+I built Minecraft2Real: a complete, working image-to-image translation project that turns Minecraft-style landscape screenshots into photorealistic landscapes (and the reverse) using CycleGAN in PyTorch. The project is mine: I chose the problem, gathered the data, implemented and trained the model, and shipped a functional pipeline with a clear interface.
+
+- Problem: Unpaired translation between two visual domains (Minecraft ↔ real-world landscapes).
+- Solution: CycleGAN (cycle-consistent adversarial networks) trained on public datasets, with a web-style gallery to inspect training progress (inspired by the official pytorch-CycleGAN-and-pix2pix repo).
+- Deliverables: A Jupyter notebook that runs end-to-end (data download, training, checkpointing, visualization), a README with setup and usage, and an HTML gallery (checkpoints/minecraft2real/web/index.html) that shows epoch-by-epoch results.
+
+2. ORIGINALITY AND RESOURCEFULNESS
+----------------------------------
+- I chose a concrete, fun application (Minecraft → real) rather than a generic demo.
+- I used the Kaggle API and two datasets (Minecraft landscapes + a cleaned real-landscape dataset) and wired them into a single pipeline.
+- I implemented the full training loop (generators, discriminators, cycle and identity losses), checkpointing, and learning-rate scheduling.
+- I added a browser-viewable progress gallery (like the official CycleGAN/pix2pix repo) so results are easy to inspect and share.
+
+3. SHIPPED PRODUCT (NOT JUST A CONCEPT)
+----------------------------------------
+- The notebook runs on Google Colab (GPU) or locally: data downloads, model trains, checkpoints and figures are saved.
+- Training progress is viewable in checkpoints/minecraft2real/web/index.html after (or during) training.
+- README provides prerequisites, installation, dataset setup, train/view instructions, and project layout.
+- Code is in a single repo (notebook + util script for the web gallery) and is ready for someone else to clone and run.
+
+4. HOW TO VIEW EVIDENCE
+-----------------------
+- Repo: https://github.com/xhcarina/Minecraft2Real
+- Main artifact: CycleGanProject.ipynb (full pipeline).
+- After running training: open checkpoints/minecraft2real/web/index.html for epoch-by-epoch results (you can add a short screen recording or screenshots of this page for the submission if desired).
+
+5. TECHNICAL STACK
+------------------
+PyTorch, torchvision, NumPy, Matplotlib, PIL, Kaggle API (kagglehub). Trained on Colab (e.g. A100 GPU). Model: CycleGAN (two generators, two discriminators; GAN + cycle consistency + identity losses).
+
+============================================================================
+I confirm this project is my own work and represents a functional product I built and shipped, not only a conceptual framework.

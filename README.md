@@ -149,25 +149,16 @@ Remaining challenges include occasional texture artifacts and smoothing of stair
 
 ## Training Progress
 
-<p align="center">
-<b>Epoch 5</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<b>Epoch 25</b>
-</p>
 
-<p align="center">
-<img src="images/epoch5.png" width="350">
-<img src="images/epoch25.png" width="350">
-</p>
+| Epoch 5 | Epoch 25 |
+|--------|---------|
+| ![](images/epoch5.png) | ![](images/epoch25.png) |
 
-<p align="center">
-<b>Epoch 39 (last before reducing learning rate)</b> &nbsp;&nbsp;&nbsp;&nbsp;
-<b>Epoch 49 (final result)</b>
-</p>
+| Epoch 39 (before LR decay) | Epoch 49 (final result) |
+|-----------------------------|-------------------------|
+| ![](images/epoch39.png) | ![](images/epoch49.png) |
 
-<p align="center">
-<img src="images/epoch39.png" width="350">
-<img src="images/epoch49.png" width="350">
-</p>
+More results are avaliable in images or with result.ipynb
 
 ## References
 

@@ -1,128 +1,176 @@
-# Minecraft2Real — CycleGAN Image-to-Image Translation
+# Minecraft2Real — CycleGAN Image Translation
 
-Unpaired image-to-image translation: **Minecraft-style landscapes → photorealistic landscapes** (and vice versa) using Cycle-Consistent Adversarial Networks (CycleGAN) in PyTorch.
+This project implements **CycleGAN in PyTorch** to translate between two unpaired visual domains:
 
-This project implements CycleGAN to learn a mapping between two domains without paired data: screenshots from Minecraft and real-world landscape photos.
+- **Minecraft landscapes → photorealistic landscapes**
+- **Real landscapes → Minecraft-style scenes**
+
+The goal is to learn structural correspondences between highly different visual distributions without paired training data.
+
+---
+
+## Dataset
+
+Inspired by GTA-to-landscape translation tasks, we construct two image domains:
+
+**Domain X — Minecraft landscapes**  
+444 screenshots from the Kaggle dataset 
+`coreydobbs/minecraft-landscapes`. (Took every 10th images for uniqueness and avoiding missing out)
+
+**Domain Y — Real landscapes**  
+1,663 curated landscape photographs from  
+`xuehancarina/cleaned-landscape-for-cyclegan`. (Manually cleaned and uploaded on my Kaggle)
+
+During early experiments we found that generic landscape photos produced poor results because CycleGAN primarily learns **texture and color mappings rather than geometry**. We therefore **manually cleaned the dataset** by removing:
+
+- images containing buildings or people  
+- high depth-of-field photography  
+- sky-dominant scenes  
+- overly complex gradient textures  
+- duplicate images
+
+Images are split **90/10 for train/test**.
+
+---
+
+## Preprocessing
+
+Images are resized and normalized before training.
+
+- Random crop: **256×256 from 286×286**
+- Random horizontal flip (training)
+- Center crop (testing)
+- Pixel normalization to **[-1, 1]**
+
+Since the domains are unpaired, images from X and Y are **randomly matched each iteration**.
+
+---
+
+## Architecture
+
+### Generators
+
+Both generators follow the original **CycleGAN encoder–residual–decoder architecture**:
+
+- 3 downsampling convolutions
+- **9 residual blocks**
+- bilinear upsampling decoder
+- **instance normalization** throughout
+
+Design choices:
+
+- **Reflection padding** to reduce boundary artifacts  
+- **Dropout (0.2)** in residual blocks for regularization  
+- **Bilinear upsampling instead of transpose convolution** to avoid checkerboard artifacts
+
+Weights are initialized from **N(0, 0.02)**.
+
+---
+
+### Discriminators
+
+We use a **70×70 PatchGAN discriminator**, producing a grid of real/fake predictions instead of a single score.
+
+This focuses the model on **local texture realism**, which is important when translating Minecraft’s block textures into natural terrain.
+
+Additional stabilization:
+
+- **Spectral normalization** on deeper layers  
+- **LeakyReLU(0.2)** activation
+
+---
+
+## Training
+
+Training uses standard CycleGAN objectives:
+
+- **Adversarial loss (MSE)**
+- **Cycle-consistency loss (L1)**
+- **Identity loss (L1)**
+
+Loss weights:
+
+```
+loss_G = loss_GAN + λ_cycle · loss_cycle + λ_id · loss_identity
+```
+
+Hyperparameters:
+
+- λ_cycle = **10.0**
+- λ_id = **0.5**
+
+Reducing λ_id from the default value allowed the generator to explore richer natural textures.
+
+---
+
+## Edge-Weighted Cycle Loss
+
+Minecraft skies are extremely uniform, while real skies contain gradients and lighting variation.  
+This often caused artifacts during training.
+
+To address this, we introduce an **edge-weighted cycle loss**:
+
+- A **Sobel filter** computes gradient magnitude.
+- High-frequency regions (terrain, cliffs, grass) receive higher weight.
+- Low-frequency regions (sky, water) receive lower weight.
+
+This encourages the generator to focus on meaningful texture differences rather than flat regions.
+
+---
+
+## Optimization Strategy
+
+To prevent the discriminator from dominating training:
+
+- Generator learning rate: **0.0002**
+- Discriminator learning rate: **0.0001**
+
+Training schedule:
+
+- **40 epochs** base learning rate  
+- **20 epochs** reduced learning rate (÷10)
+
+Best visual results appeared around **epoch 49**.
+
+Each epoch processes **~1000 image pairs**.
 
 ---
 
 ## Results
 
-- **X → Y**: Minecraft → Real landscape  
-- **Y → X**: Real landscape → Minecraft  
+The model learns meaningful correspondences between the two domains:
 
-Training progress is saved each epoch. After training, open **`checkpoints/minecraft2real/web/index.html`** in a browser to browse results by epoch (same idea as the official repo’s `checkpoints/<name>/web/index.html`).
+- **Minecraft → Real:** smooth natural terrain while preserving scene layout  
+- **Real → Minecraft:** block-like geometry and grid textures emerge
 
-*(Add a screenshot or two of your best epoch here once you have them.)*
+The edge-weighted cycle loss helps produce **smoother skies and water regions** while maintaining terrain detail.
 
----
-
-## Prerequisites
-
-- **Python 3** (tested on 3.8+)
-- **PyTorch** (with CUDA if you want GPU)
-- **Kaggle API** (for downloading datasets)
+Remaining challenges include occasional texture artifacts and smoothing of staircase structures.
 
 ---
 
-## Getting Started
+## Project Structure
 
-### 1. Clone and setup
-
-```bash
-git clone https://github.com/xhcarina/Minecraft2Real.git
-cd Minecraft2Real
+```
+Minecraft2Real/
+├── CycleGanProject.ipynb
+├── util/
+│   └── web_html.py
+├── checkpoints/
+│   └── minecraft2real/
+└── README.md
 ```
 
-### 2. Install dependencies
+Training progress can be viewed in:
 
-```bash
-pip install torch torchvision matplotlib numpy pillow kagglehub
 ```
-
-(Use a virtualenv or conda if you prefer.)
-
-### 3. Datasets
-
-The notebook pulls data via the Kaggle API:
-
-- **Domain X (Minecraft)**: [minecraft-landscapes](https://www.kaggle.com/datasets/coreydobbs/minecraft-landscapes) (Kaggle)
-- **Domain Y (Real)**: [cleaned-landscape-for-cyclegan](https://www.kaggle.com/datasets/xuehancarina/cleaned-landscape-for-cyclegan) (Kaggle)
-
-Configure the Kaggle API (e.g. `~/.kaggle/kaggle.json`) so the notebook can download these automatically.
-
-### 4. Train
-
-1. Open **`CycleGanProject.ipynb`** in Jupyter or Google Colab (GPU recommended).
-2. Run all cells in order.  
-   - Training runs for 60 epochs by default.  
-   - Every 5 epochs a checkpoint is saved as `result_epoch_<e>.pth`.  
-   - Each epoch saves a progress figure into **`checkpoints/minecraft2real/web/images/`** and updates **`checkpoints/minecraft2real/web/index.html`**.
-
-### 5. View training progress (web interface)
-
-After (or during) training, open in a browser:
-
-```text
 checkpoints/minecraft2real/web/index.html
 ```
 
-You’ll see one page per epoch (newest first), with the same style of visualization as in the official CycleGAN/pix2pix repo.
-
-### 6. Test / inference
-
-Use the later cells in the notebook to load a checkpoint (e.g. `result_epoch_49.pth`), run the generators on test images, and visualize Minecraft→Real and Real→Minecraft.
-
 ---
 
-## Project layout
+## References
 
-```text
-Minecraft2Real/
-├── README.md                 # This file
-├── CycleGanProject.ipynb     # Full pipeline: data, train, visualize
-├── util/
-│   └── web_html.py           # Epoch gallery: save figures + index.html
-└── checkpoints/
-    └── minecraft2real/
-        └── web/
-            ├── index.html   # Open this to view progress
-            └── images/      # epoch_000.png, epoch_001.png, ...
-```
+Zhu et al., *Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks*, ICCV 2017.
 
----
-
-## Training details
-
-- **Model**: CycleGAN (two generators G_XY, G_YX; two discriminators).
-- **Losses**: GAN loss, cycle consistency (L1), identity loss; optional edge/sky weighting.
-- **Epochs**: 60 (default); checkpoint every 5 epochs; optional LR decay after 40 epochs.
-- **Output**: Checkpoints `result_epoch_<e>.pth` and web gallery in `checkpoints/minecraft2real/web/`.
-
----
-
-## Citation
-
-If you use this code or idea, consider citing the CycleGAN paper:
-
-```bibtex
-@inproceedings{CycleGAN2017,
-  title={Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks},
-  author={Zhu, Jun-Yan and Park, Taesung and Isola, Phillip and Efros, Alexei A},
-  booktitle={ICCV},
-  year={2017}
-}
-```
-
----
-
-## Related work
-
-- [pytorch-CycleGAN-and-pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) — PyTorch CycleGAN/pix2pix (this repo’s interface is inspired by their web results).
-- [CycleGAN (Torch)](https://github.com/junyanz/CycleGAN) — Original Torch implementation.
-
----
-
-## License
-
-See repository for license information.
+Miyato et al., *Spectral Normalization for GANs*, ICLR 2018.

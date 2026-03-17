@@ -147,6 +147,27 @@ The edge-weighted cycle loss helps produce **smoother skies and water regions** 
 
 Remaining challenges include occasional texture artifacts and smoothing of staircase structures.
 
+## Training Progress
+
+<p align="center">
+<b>Epoch 5</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<b>Epoch 25</b>
+</p>
+
+<p align="center">
+<img src="images/epoch5.png" width="350">
+<img src="images/epoch25.png" width="350">
+</p>
+
+<p align="center">
+<b>Epoch 39 (last before reducing learning rate)</b> &nbsp;&nbsp;&nbsp;&nbsp;
+<b>Epoch 49 (final result)</b>
+</p>
+
+<p align="center">
+<img src="images/epoch39.png" width="350">
+<img src="images/epoch49.png" width="350">
+</p>
 
 ## References
 

@@ -2,7 +2,7 @@
 
 Unpaired image-to-image translation: **Minecraft-style landscapes → photorealistic landscapes** (and vice versa) using Cycle-Consistent Adversarial Networks (CycleGAN) in PyTorch.
 
-This project implements CycleGAN to learn a mapping between two domains without paired data: screenshots from Minecraft and real-world landscape photos. You can train the model and view intermediate results in an HTML gallery (similar to [pytorch-CycleGAN-and-pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix)).
+This project implements CycleGAN to learn a mapping between two domains without paired data: screenshots from Minecraft and real-world landscape photos.
 
 ---
 

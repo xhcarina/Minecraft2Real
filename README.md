@@ -152,11 +152,11 @@ Remaining challenges include occasional texture artifacts and smoothing of stair
 
 | Epoch 5 | Epoch 25 |
 |--------|---------|
-| ![](images/epoch5.png) | ![](images/epoch25.png) |
+| ![](image/epoch5.png) | ![](image/epoch25.png) |
 
 | Epoch 39 (before LR decay) | Epoch 49 (final result) |
 |-----------------------------|-------------------------|
-| ![](images/epoch39.png) | ![](images/epoch49.png) |
+| ![](image/epoch39.png) | ![](image/epoch49.png) |
 
 More results are avaliable in images or with result.ipynb
 

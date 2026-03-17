@@ -147,27 +147,6 @@ The edge-weighted cycle loss helps produce **smoother skies and water regions** 
 
 Remaining challenges include occasional texture artifacts and smoothing of staircase structures.
 
----
-
-## Project Structure
-
-```
-Minecraft2Real/
-├── CycleGanProject.ipynb
-├── util/
-│   └── web_html.py
-├── checkpoints/
-│   └── minecraft2real/
-└── README.md
-```
-
-Training progress can be viewed in:
-
-```
-checkpoints/minecraft2real/web/index.html
-```
-
----
 
 ## References
 

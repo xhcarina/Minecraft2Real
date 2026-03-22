@@ -1,5 +1,7 @@
 # Minecraft2Real — CycleGAN Image Translation
 
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://minecraft2real-xhcarina.streamlit.app/)
+
 This project implements **CycleGAN in PyTorch** to translate between two unpaired visual domains:
 
 - **Minecraft landscapes → photorealistic landscapes**

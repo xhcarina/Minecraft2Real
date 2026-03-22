@@ -134,10 +134,10 @@ def pil_to_bytes(img: Image.Image, fmt="PNG") -> bytes:
 
 # ── UI ────────────────────────────────────────────────────────────────────────
 
-st.set_page_config(page_title="Minecraft2Real", page_icon="🌿", layout="wide")
+st.set_page_config(page_title="Minecraft ↔ Real", page_icon="🌿", layout="wide")
 
-st.title("🌿 Minecraft ↔ Real Landscape Translator")
-st.caption("CycleGAN — upload a checkpoint and an image to translate between domains.")
+st.title("🌿 Minecraft ↔ Real")
+st.caption("CycleGAN — translate between Minecraft and real landscapes.")
 
 # Sidebar: checkpoint selection
 with st.sidebar:
